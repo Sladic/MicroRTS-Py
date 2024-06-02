@@ -328,20 +328,37 @@ if __name__ == "__main__":
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     torch.backends.cudnn.deterministic = args.torch_deterministic
-    envs = MicroRTSGridModeVecEnv(
-        num_selfplay_envs=args.num_selfplay_envs,
-        num_bot_envs=args.num_bot_envs,
-        partial_obs=args.partial_obs,
-        max_steps=2000,
-        render_theme=2,
-        ai2s=[microrts_ai.coacAI for _ in range(args.num_bot_envs - 6)]
-        + [microrts_ai.randomBiasedAI for _ in range(min(args.num_bot_envs, 2))]
-        + [microrts_ai.lightRushAI for _ in range(min(args.num_bot_envs, 2))]
-        + [microrts_ai.workerRushAI for _ in range(min(args.num_bot_envs, 2))],
-        map_paths=[args.train_maps[0]],
-        reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
-        cycle_maps=args.train_maps,
-    )
+    if: args.partial_obs = false:
+        envs = MicroRTSGridModeVecEnv(
+            num_selfplay_envs=args.num_selfplay_envs,
+            num_bot_envs=args.num_bot_envs,
+            partial_obs=args.partial_obs,
+            max_steps=2000,
+            render_theme=2,
+            ai2s=[microrts_ai.coacAI for _ in range(args.num_bot_envs - 6)]
+            + [microrts_ai.randomBiasedAI for _ in range(min(args.num_bot_envs, 2))]
+            + [microrts_ai.lightRushAI for _ in range(min(args.num_bot_envs, 2))]
+            + [microrts_ai.workerRushAI for _ in range(min(args.num_bot_envs, 2))],
+            map_paths=[args.train_maps[0]],
+            reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
+            cycle_maps=args.train_maps,
+        )
+    else:
+        envs = MicroRTSGridModeVecEnv(
+            num_selfplay_envs=args.num_selfplay_envs,
+            num_bot_envs=args.num_bot_envs,
+            partial_obs=args.partial_obs,
+            max_steps=2000,
+            render_theme=2,
+            ai2s=[microrts_ai.randomBiasedAI for _ in range(args.num_bot_envs - 20)]
+	        + [microrts_ai.POLightRush for _ in range(min(args.num_bot_envs, 5))]
+            + [microrts_ai.POWorkerRush for _ in range(min(args.num_bot_envs, 5))]
+            + [microrts_ai.POHeavyRush for _ in range(min(args.num_bot_envs, 5))]
+            + [microrts_ai.PORangedRush for _ in range(min(args.num_bot_envs, 5))],
+            map_paths=[args.train_maps[0]],
+            reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
+            cycle_maps=args.train_maps,
+        )
     envs = MicroRTSStatsRecorder(envs, args.gamma)
     envs = VecMonitor(envs)
     if args.capture_video:
