@@ -326,9 +326,17 @@ if __name__ == "__main__":
 
     random.seed(args.seed)
     np.random.seed(args.seed)
+    ai2s = ([microrts_ai.randomBiasedAI for _ in range(args.num_bot_envs - 24)]
+           + [microrts_ai.POLightRush for _ in range(min(args.num_bot_envs, 4))]
+           + [microrts_ai.POWorkerRush for _ in range(min(args.num_bot_envs, 4))]
+           + [microrts_ai.POHeavyRush for _ in range(min(args.num_bot_envs, 4))]
+           + [microrts_ai.PORangedRush for _ in range(min(args.num_bot_envs, 4))]
+           + [microrts_ai.MentalSealPO for _ in range(min(args.num_bot_envs, 4))]
+           + [microrts_ai.MicroPhantom for _ in range(min(args.num_bot_envs, 4))])
+    print(len(ai2s))
     torch.manual_seed(args.seed)
     torch.backends.cudnn.deterministic = args.torch_deterministic
-    if: args.partial_obs = false:
+    if args.partial_obs == False:
         envs = MicroRTSGridModeVecEnv(
             num_selfplay_envs=args.num_selfplay_envs,
             num_bot_envs=args.num_bot_envs,
@@ -350,11 +358,7 @@ if __name__ == "__main__":
             partial_obs=args.partial_obs,
             max_steps=2000,
             render_theme=2,
-            ai2s=[microrts_ai.randomBiasedAI for _ in range(args.num_bot_envs - 20)]
-	        + [microrts_ai.POLightRush for _ in range(min(args.num_bot_envs, 5))]
-            + [microrts_ai.POWorkerRush for _ in range(min(args.num_bot_envs, 5))]
-            + [microrts_ai.POHeavyRush for _ in range(min(args.num_bot_envs, 5))]
-            + [microrts_ai.PORangedRush for _ in range(min(args.num_bot_envs, 5))],
+            ai2s = ai2s,
             map_paths=[args.train_maps[0]],
             reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
             cycle_maps=args.train_maps,

@@ -1,0 +1,18 @@
+trap '' HUP  # Allow us to disconnect the terminal
+
+export WANDB_API_KEY=556ee8c0236d01b936129c689b1d57e01bd8a200
+export WANDB_NAME="Train_MicroRTS_PPO_Partial_obs_Added_Advanced_Bots"
+export WANDB_NOTES="Training on a single map, using different bots to play against, partial observability is on! MindSeal and microPhantom included."
+
+nohup poetry run xvfb-run -a -e /data/I6334321/xvfb_err.log python ppo_gridnet.py \
+    --train-maps "maps/16x16/basesWorkers16x16A.xml" \
+    --eval-maps "maps/16x16/basesWorkers16x16A.xml" \
+    --num-bot-envs 32 \
+    --num-selfplay-envs 0 \
+    --total-timesteps 300000000 \
+    --wandb-entity games_research \
+    --prod-mode \
+    --seed 4 \
+    --partial-obs true \
+    --capture-video true \
+    > /data/I6334321/train.log 2> /data/I6334321/train.err &

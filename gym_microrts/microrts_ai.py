@@ -121,6 +121,17 @@ def guidedRojoA3N(utt):
     return GuidedRojoA3N(utt)
 
 
+def MentalSealPO(utt):
+    from ai.abstraction.partialobservability import MentalSealPO
+
+    return MentalSealPO(utt)
+
+
+def MicroPhantom(utt):
+    from ai.abstraction.partialobservability import MicroPhantom
+
+    return MicroPhantom(utt)
+
 ALL_AIS = [
     randomBiasedAI,
     randomAI,
@@ -129,4 +140,6 @@ ALL_AIS = [
     lightRushAI,
     coacAI,
     naiveMCTSAI,
+    MentalSealPO,
+    MicroPhantom
 ]

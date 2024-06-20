@@ -110,7 +110,9 @@ class MicroRTSGridModeVecEnv:
                 "lib/bots/MixedBot.jar",
                 "lib/bots/TiamatBot.jar",
                 "lib/bots/UMSBot.jar",
-                "lib/bots/mayariBot.jar",  # "MindSeal.jar"
+                "lib/bots/mayariBot.jar",
+		"lib/bots/microPhantom.jar",
+		"lib/bots/MindSeal.jar",  # "MindSeal.jar"
             ]
             for jar in jars:
                 jpype.addClassPath(os.path.join(self.microrts_path, jar))
@@ -349,7 +351,9 @@ class MicroRTSBotVecEnv(MicroRTSGridModeVecEnv):
                 "lib/bots/MixedBot.jar",
                 "lib/bots/TiamatBot.jar",
                 "lib/bots/UMSBot.jar",
-                "lib/bots/mayariBot.jar",  # "MindSeal.jar"
+                "lib/bots/mayariBot.jar",
+		"lib/bots/microPhantom.jar",
+		"lib/bots/MindSeal.jar",  # "MindSeal.jar"
             ]
             for jar in jars:
                 jpype.addClassPath(os.path.join(self.microrts_path, jar))
