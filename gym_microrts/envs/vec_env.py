@@ -196,14 +196,35 @@ class MicroRTSGridModeVecEnv:
         return np.array(obs)
 
     def _encode_obs(self, obs):
-        obs = obs.reshape(len(obs), -1).clip(0, np.array([self.num_planes]).T - 1)
+    # Path to the log file
+        log_path = 'observations_log.txt'
+        
+        # Simplify the clip by using a constant value if all dimensions should be the same
+        max_clip_value = sum(self.num_planes) - 1
+        obs = obs.reshape(len(obs), -1).clip(0, max_clip_value)
+
         obs_planes = np.zeros((self.height * self.width, self.num_planes_prefix_sum[-1]), dtype=np.int32)
         obs_planes_idx = np.arange(len(obs_planes))
         obs_planes[obs_planes_idx, obs[0]] = 1
 
-        for i in range(1, self.num_planes_len):
-            obs_planes[obs_planes_idx, obs[i] + self.num_planes_prefix_sum[i]] = 1
-        return obs_planes.reshape(self.height, self.width, -1)
+        for i in range(1, self.num_planes_len - 2 if self.partial_obs else self.num_planes_len):
+            offset = self.num_planes_prefix_sum[i]
+            obs_planes[obs_planes_idx, obs[i] + offset] = 1
+
+        reshaped_obs_planes = obs_planes.reshape(self.height, self.width, -1)
+
+        # Log the last two features of each position before returning, only if they are not both zero
+        with open(log_path, 'a') as file:
+            for i in range(reshaped_obs_planes.shape[0]):  # loop over height
+                for j in range(reshaped_obs_planes.shape[1]):  # loop over width
+                    # Fetch the last two features of the observation at position (i, j)
+                    last_two_features = reshaped_obs_planes[i, j, -2:]
+                    # Check if the last two features are not both zero
+                    if not np.array_equal(last_two_features, [0, 0]):
+                        # Log the information for each position that meets the condition
+                        file.write(f'Position ({i},{j}): Last Two Features: {last_two_features.tolist()}\n')
+    
+        return reshaped_obs_planes
 
     def step_async(self, actions):
         actions = actions.reshape((self.num_envs, self.width * self.height, -1))
